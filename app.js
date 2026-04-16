@@ -36,6 +36,13 @@ const devices = {
                     { text: "全く反応がない", next: "check_plug" }
                 ]
             },
+            choke_ok_but_fails: {
+                question: "初爆後、チョークを戻して（開けて）引きましたか？",
+                options: [
+                    { text: "戻して引いてもかからない", next: "check_plug" },
+                    { text: "チョークを閉じたまま引き続けた", next: "plug_flooded" }
+                ]
+            },
             check_plug: {
                 question: "スパークプラグを外して見てください。状態は？",
                 options: [
@@ -46,9 +53,11 @@ const devices = {
             },
             // Results
             engine_seized: { isResult: true, title: "エンジンの焼き付き", description: "ピストンやシリンダーが固着しています。オイル不足が原因です。", actions: ["修理店に持ち込んでください。シリンダー交換が必要です。"] },
-            stale_fuel: { isResult: true, title: "燃料の劣化", description: "古い燃料はキャブレターを詰まらせます。", actions: ["古い燃料を捨て、新しい燃料に入れ替えてください。"] },
-            plug_flooded: { isResult: true, title: "燃料かぶり", description: "内部に燃料が溜まりすぎています。", actions: ["プラグを外し、清掃・乾燥させてから再度始動してください。"] },
-            carb_clogged: { isResult: true, title: "キャブレター詰まり", description: "内部のノズルが詰まっています。", actions: ["キャブレタークリーナーで洗浄するか、アセンブリ交換してください。"] }
+            starter_broken: { isResult: true, title: "スターターの不具合", description: "ゼンマイの折れ、あるいは爪が噛み合っていません。", actions: ["スターターアッセンブリーを分解清掃するか、交換してください。"] },
+            stale_fuel: { isResult: true, title: "燃料の劣化", description: "古い燃料はキャブレターを詰まらせます。", actions: ["古い燃料を捨て、新しい混合燃料に入れ替えてください。"] },
+            plug_flooded: { isResult: true, title: "燃料かぶり", description: "内部に燃料が溜まりすぎでいます。", actions: ["プラグを外し、清掃・乾燥させてから再度始動してください。"] },
+            plug_dirty: { isResult: true, title: "プラグの汚れ", description: "火花が弱くなっています。", actions: ["プラグを磨くか、新品に交換してください。"] },
+            carb_clogged: { isResult: true, title: "キャブレター詰まり", description: "内部のノズルが詰まっています。", actions: ["キャブレタークリーナーで洗浄するか、ダイヤフラム等を交換してください。"] }
         },
         maint: [
             { group: "1. 使用前点検", items: ["ネジ・ボルトの緩み確認", "燃料漏れ・ホースの亀裂確認", "飛散保護カバーの状態"] },
@@ -83,10 +92,17 @@ const devices = {
                 ]
             },
             check_choke: {
-                question: "チョークを閉じて数回引き、初爆（一瞬かかる音）はありましたか？",
+                question: "チョークを閉じて数回引き、初爆はありましたか？",
                 options: [
                     { text: "「ブォン」と一瞬音がした", next: "choke_ok_but_fails" },
                     { text: "全く反応がない", next: "check_plug" }
+                ]
+            },
+            choke_ok_but_fails: {
+                question: "初爆後、チョークを戻して（開けて）引きましたか？",
+                options: [
+                    { text: "戻して引いてもかからない", next: "check_plug" },
+                    { text: "チョークを閉じたまま引き続けた", next: "plug_flooded" }
                 ]
             },
             check_plug: {
@@ -95,13 +111,6 @@ const devices = {
                     { text: "黒く湿っている（濡れている）", next: "plug_flooded" },
                     { text: "乾いているが真っ黒に汚れている", next: "plug_dirty" },
                     { text: "きれいで火花も飛ぶ", next: "carb_clogged" }
-                ]
-            },
-            choke_ok_but_fails: {
-                question: "初爆後、チョークを戻して（開けて）引きましたか？",
-                options: [
-                    { text: "戻して引いてもかからない", next: "check_plug" },
-                    { text: "チョークを閉じたまま引き続けた", next: "plug_flooded" }
                 ]
             },
             chain_issue: {
@@ -128,17 +137,19 @@ const devices = {
             // Results
             release_brake: { isResult: true, title: "チェンブレーキの作動", description: "安全装置がかかっています。", actions: ["ハンドガードを手前にカチッと音がするまで引いて解除してください。"] },
             stale_fuel: { isResult: true, title: "燃料の劣化", description: "古い燃料はキャブレターを詰まらせます。", actions: ["古い燃料を捨て、新しい燃料に入れ替えてください。"] },
-            plug_flooded: { isResult: true, title: "燃料かぶり", description: "内部に燃料が溜まりすぎています。", actions: ["プラグを外し、清掃・乾燥させてから再度始動してください。"] },
-            plug_dirty: { isResult: true, title: "プラグの汚れ・劣化", description: "火花が弱くなっています。", actions: ["プラグのカーボンを金属ブラシで落とすか、新品に交換してください。"] },
-            carb_clogged: { isResult: true, title: "キャブレター詰まり", description: "内部のノズルが詰まっています。", actions: ["キャブレタークリーナーで洗浄するか、アセンブリ交換してください。"] },
+            plug_flooded: { isResult: true, title: "燃料かぶり", description: "内部に燃料が溜まりすぎでいます。", actions: ["プラグを外し、清掃・乾燥させてから再度始動してください。"] },
+            plug_dirty: { isResult: true, title: "プラグの汚れ", description: "火花が弱くなっています。", actions: ["プラグのカーボンを落とすか、新品に交換してください。"] },
+            carb_clogged: { isResult: true, title: "キャブレター詰まり", description: "内部のノズルが詰まっています。", actions: ["キャブレタークリーナーで洗浄するか、ダイヤフラムを交換してください。"] },
             clutch_broken: { isResult: true, title: "クラッチスプリングの破損", description: "遠心クラッチのバネが切れています。", actions: ["クラッチ部分を分解し、スプリングを交換してください。"] },
-            oil_path_clogged: { isResult: true, title: "オイル経路の詰まり", description: "おが屑やゴミがオイルの出口を塞いでいます。", actions: ["ガイドバーを外し、本体側のオイル出口を確認・清掃してください。"] },
-            uneven_sharpening: { isResult: true, title: "目立ての不均一", description: "左右の刃の研ぎ角や長さが異なると曲がって切れます。", actions: ["全ての刃の長さを揃えるように目立てをし直してください。"] },
-            depth_gauge_high: { isResult: true, title: "デプスゲージが高すぎる", description: "刃の食い込み深さを決める突起が高すぎます。", actions: ["デプスゲージを平ヤスリで規定の高さまで削り落としてください。"] }
+            brake_engaged_or_frozen: { isResult: true, title: "ブレーキ固着・内部破損", description: "ブレーキバンド等の不具合です。", actions: ["ブレーキ周りの清掃を行い、改善しない場合は要修理です。"] },
+            oil_path_clogged: { isResult: true, title: "オイル経路の詰まり", description: "おが屑がオイル出口を塞いでいます。", actions: ["ガイドバーを外し、オイル出口を清掃してください。"] },
+            oil_flow_adj: { isResult: true, title: "オイル吐出量の調整不足", description: "オイルポンプの設定が低すぎます。", actions: ["本体底面の調整ネジを回して吐出量を増やしてください。"] },
+            uneven_sharpening: { isResult: true, title: "目立ての不均一", description: "左右の刃の長さが異なると曲がります。", actions: ["全ての刃を揃えるように目立てをし直してください。"] },
+            depth_gauge_high: { isResult: true, title: "デプスゲージが高すぎる", description: "刃が食い込みません。", actions: ["平ヤスリでデプスゲージを規定の高さまで削ってください。"] }
         },
         maint: [
-            { group: "1. 使用前点検", items: ["チェンブレーキの作動確認", "チェンの張り調整（適正：軽く持ち上がる程度）", "オイル供給の確認"] },
-            { group: "2. 定期整備", items: ["エアクリーナーの清掃", "ガイドバーのバリ取り・溝清掃", "燃料・オイルフィルタの点検"] }
+            { group: "1. 使用前点検", items: ["チェンブレーキの作動確認", "チェンの張り調整", "オイル供給の確認"] },
+            { group: "2. 定期整備", items: ["エアクリーナーの清掃", "ガイドバーの溝清掃", "フィルタの点検"] }
         ]
     }
 };
@@ -209,16 +220,23 @@ function renderDiagnosis() {
     const device = devices[currentDeviceId];
     const node = device.diag[currentDiagPath];
     
+    if (!node) {
+        console.error("Node not found:", currentDiagPath);
+        elements.questionText.textContent = "エラー：診断データが見つかりません。";
+        elements.optionsContainer.innerHTML = '<button class="option-btn" onclick="location.reload()">最初からやり直す</button>';
+        return;
+    }
+
     const stepCount = history.length + 1;
     elements.currentStep.textContent = stepCount.toString().padStart(2, '0');
-    elements.progressFill.style.width = `${Math.min(stepCount * 20, 100)}%`;
+    elements.progressFill.style.width = \`${Math.min(stepCount * 20, 100)}%\`;
 
     if (node.isResult) {
         elements.questionArea.classList.add('hidden');
         elements.resultArea.classList.remove('hidden');
         elements.resultTitle.textContent = node.title;
         elements.resultDescription.textContent = node.description;
-        elements.actionList.innerHTML = node.actions.map(a => `<li>${a}</li>`).join('');
+        elements.actionList.innerHTML = node.actions.map(a => \`<li>\${a}</li>\`).join('');
     } else {
         elements.questionArea.classList.remove('hidden');
         elements.resultArea.classList.add('hidden');
@@ -240,34 +258,34 @@ function renderDiagnosis() {
 
 function renderMaint() {
     const device = devices[currentDeviceId];
-    let html = `<div class="maint-card">
-        <div class="maint-icon">${currentDeviceId === 'brushcutter' ? '🔧' : '⛓️'}</div>
-        <h2>${device.name} 定期点検項目</h2>
-        <p class="maint-intro">定期的な点検が機械の寿命を延ばし、安全を保ちます。</p>`;
+    let html = \`<div class="maint-card">
+        <div class="maint-icon">\${currentDeviceId === 'brushcutter' ? '🔧' : '⛓️'}</div>
+        <h2>\${device.name} 定期点検項目</h2>
+        <p class="maint-intro">定期的な点検が機械の寿命を延ばし、安全を保ちます。</p>\`;
     
     device.maint.forEach(group => {
-        html += `<div class="checklist-group">
-            <h3>${group.group}</h3>
-            <div class="checklist">`;
+        html += \`<div class="checklist-group">
+            <h3>\${group.group}</h3>
+            <div class="checklist">\`;
         group.items.forEach(item => {
-            html += `<label class="check-item"><input type="checkbox"> <span class="check-text">${item}</span></label>`;
+            html += \`<label class="check-item"><input type="checkbox"> <span class="check-text">\${item}</span></label>\`;
         });
-        html += `</div></div>`;
+        html += \`</div></div>\`;
     });
     
-    html += `</div>`;
+    html += \`</div>\`;
     elements.maintContent.innerHTML = html;
 }
 
 function renderJournal() {
     const data = storageData[currentDeviceId];
-    elements.journalList.innerHTML = data.logs.slice().reverse().map(log => `
+    elements.journalList.innerHTML = data.logs.slice().reverse().map(log => \`
         <li class="journal-item">
-            <span class="journal-date">${log.date}</span>
-            <span class="journal-text">${log.text}</span>
-            <span class="journal-val">${log.val || ''}</span>
+            <span class="journal-date">\${log.date}</span>
+            <span class="journal-text">\${log.text}</span>
+            <span class="journal-val">\${log.val || ''}</span>
         </li>
-    `).join('');
+    \`).join('');
 }
 
 function addLog(text, val) {
@@ -295,16 +313,15 @@ function generateGCalLink() {
     const device = devices[currentDeviceId];
     const data = storageData[currentDeviceId];
     const nextHours = Math.ceil((data.hours + 0.1) / 20) * 20;
-    const title = encodeURIComponent(`${device.name} メンテナンス点検 (${nextHours}h目安)`);
-    const details = encodeURIComponent(`累積使用時間 ${data.hours}h。20時間ごとの定期点検時期です。 エアクリーナー、プラグ、各部ネジの確認を行ってください。`);
+    const title = encodeURIComponent(\`\${device.name} メンテナンス点検 (\${nextHours}h目安)\`);
+    const details = encodeURIComponent(\`累積使用時間 \${data.hours}h。20時間ごとの定期点検時期です。 エアクリーナー、プラグ、各部ネジの確認を行ってください。\`);
     
-    // Future date: 3 months from now as a placeholder
     const date = new Date();
     date.setMonth(date.getMonth() + 3);
     const dateStr = date.toISOString().replace(/-|:|\.\d\d\d/g, "");
-    const dateRange = `${dateStr}/${dateStr}`;
+    const dateRange = \`\${dateStr}/\${dateStr}\`;
 
-    return `https://www.google.com/calendar/render?action=TEMPLATE&text=${title}&details=${details}&dates=${dateRange}`;
+    return \`https://www.google.com/calendar/render?action=TEMPLATE&text=\${title}&details=\${details}&dates=\${dateRange}\`;
 }
 
 // --- Event Listeners ---
@@ -353,7 +370,7 @@ elements.btnLogHours.onclick = () => {
     const h = parseFloat(elements.inputHours.value);
     if (!isNaN(h) && h > 0) {
         storageData[currentDeviceId].hours += h;
-        addLog(`作業実施 (${h}時間)`, `+${h}h`);
+        addLog(\`作業実施 (\${h}時間)\`, \`+\${h}h\`);
         elements.inputHours.value = '';
     }
 };
