@@ -75,6 +75,35 @@ const devices = {
                     { text: "ブレーキがかかったままだ", next: "release_brake" }
                 ]
             },
+            check_fuel: {
+                question: "燃料の状態はどうですか？",
+                options: [
+                    { text: "新しい混合燃料が入っている", next: "check_choke" },
+                    { text: "1ヶ月以上前の古い燃料だ", next: "stale_fuel" }
+                ]
+            },
+            check_choke: {
+                question: "チョークを閉じて数回引き、初爆（一瞬かかる音）はありましたか？",
+                options: [
+                    { text: "「ブォン」と一瞬音がした", next: "choke_ok_but_fails" },
+                    { text: "全く反応がない", next: "check_plug" }
+                ]
+            },
+            check_plug: {
+                question: "スパークプラグを外して見てください。状態は？",
+                options: [
+                    { text: "黒く湿っている（濡れている）", next: "plug_flooded" },
+                    { text: "乾いているが真っ黒に汚れている", next: "plug_dirty" },
+                    { text: "きれいで火花も飛ぶ", next: "carb_clogged" }
+                ]
+            },
+            choke_ok_but_fails: {
+                question: "初爆後、チョークを戻して（開けて）引きましたか？",
+                options: [
+                    { text: "戻して引いてもかからない", next: "check_plug" },
+                    { text: "チョークを閉じたまま引き続けた", next: "plug_flooded" }
+                ]
+            },
             chain_issue: {
                 question: "チェンが回らない原因を確認します。アイドリングで回りますか？",
                 options: [
@@ -98,6 +127,10 @@ const devices = {
             },
             // Results
             release_brake: { isResult: true, title: "チェンブレーキの作動", description: "安全装置がかかっています。", actions: ["ハンドガードを手前にカチッと音がするまで引いて解除してください。"] },
+            stale_fuel: { isResult: true, title: "燃料の劣化", description: "古い燃料はキャブレターを詰まらせます。", actions: ["古い燃料を捨て、新しい燃料に入れ替えてください。"] },
+            plug_flooded: { isResult: true, title: "燃料かぶり", description: "内部に燃料が溜まりすぎています。", actions: ["プラグを外し、清掃・乾燥させてから再度始動してください。"] },
+            plug_dirty: { isResult: true, title: "プラグの汚れ・劣化", description: "火花が弱くなっています。", actions: ["プラグのカーボンを金属ブラシで落とすか、新品に交換してください。"] },
+            carb_clogged: { isResult: true, title: "キャブレター詰まり", description: "内部のノズルが詰まっています。", actions: ["キャブレタークリーナーで洗浄するか、アセンブリ交換してください。"] },
             clutch_broken: { isResult: true, title: "クラッチスプリングの破損", description: "遠心クラッチのバネが切れています。", actions: ["クラッチ部分を分解し、スプリングを交換してください。"] },
             oil_path_clogged: { isResult: true, title: "オイル経路の詰まり", description: "おが屑やゴミがオイルの出口を塞いでいます。", actions: ["ガイドバーを外し、本体側のオイル出口を確認・清掃してください。"] },
             uneven_sharpening: { isResult: true, title: "目立ての不均一", description: "左右の刃の研ぎ角や長さが異なると曲がって切れます。", actions: ["全ての刃の長さを揃えるように目立てをし直してください。"] },
