@@ -1,0 +1,134 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>刈払機プロ診断 | Pro-Diagnostics for Brushcutters</title>
+    <meta name="description" content="刈払機の故障修理をプロ並みに。質問に答えるだけで故障原因を特定し、セルフメンテナンスを支援します。">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;700&family=Noto+Sans+JP:wght@400;500;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div class="app-container">
+        <header class="app-header">
+            <div class="brand">
+                <span class="brand-icon">🛠️</span>
+                <div class="brand-text">
+                    <h1>プロ・メンテナンス診断</h1>
+                    <p>PRO-EQUIPMENT MANAGER</p>
+                </div>
+            </div>
+            
+            <div class="device-switcher">
+                <button id="device-brushcutter" class="device-btn active">刈払機</button>
+                <button id="device-chainsaw" class="device-btn">チェンソー</button>
+            </div>
+
+            <nav class="app-nav">
+                <button id="btn-home" class="nav-item active">故障診断</button>
+                <button id="btn-maint" class="nav-item">点検リスト</button>
+                <button id="btn-journal" class="nav-item">管理記録</button>
+            </nav>
+        </header>
+
+        <main class="app-main">
+            <!-- Stats Bar (New) -->
+            <div id="stats-bar" class="stats-bar">
+                <div class="stat-item">
+                    <span class="stat-label">累積使用時間:</span>
+                    <span id="stat-hours" class="stat-value">0.0</span>h
+                </div>
+                <div class="stat-item">
+                    <span class="stat-label">次回点検目安:</span>
+                    <span id="stat-next" class="stat-value">20.0</span>h
+                </div>
+            </div>
+
+            <!-- Diagnosis Section -->
+            <section id="section-diag" class="app-section">
+                <!-- ... existing content within diag-card ... -->
+                <div id="diag-container" class="diag-card">
+                    <div class="diag-header">
+                        <div class="step-indicator">
+                            <span class="step-label">DIAGNOSIS STEP</span>
+                            <span id="current-step" class="step-number">01</span>
+                            <div class="progress-bar">
+                                <div id="progress-fill" class="progress-fill"></div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div id="question-area" class="question-area">
+                        <h2 id="question-text">現在どのような症状がありますか？</h2>
+                        <div id="options-container" class="options-grid">
+                            <!-- Options will be injected here -->
+                        </div>
+                    </div>
+
+                    <div id="result-area" class="result-area hidden">
+                        <div class="result-badge">原因特定</div>
+                        <h2 id="result-title">タイトル</h2>
+                        <div id="result-description" class="result-description">説明</div>
+                        <div class="action-plan">
+                            <h3>プロの対処手順</h3>
+                            <ul id="action-list"></ul>
+                        </div>
+                        
+                        <div class="result-actions">
+                            <button id="btn-restart" class="btn-secondary">最初に戻る</button>
+                            <button id="btn-gcal" class="btn-gcal">📅 点検予定をカレンダーに登録</button>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Maintenance Section -->
+            <section id="section-maint" class="app-section hidden">
+                <div id="maint-content">
+                    <!-- Dynamic content based on device -->
+                </div>
+            </section>
+
+            <!-- Journal Section (New) -->
+            <section id="section-journal" class="app-section hidden">
+                <div class="journal-card">
+                    <h2>メンテナンスジャーナル</h2>
+                    
+                    <div class="journal-form">
+                        <div class="form-row">
+                            <div class="input-group">
+                                <label>使用時間を記録 (h)</label>
+                                <input type="number" id="input-hours" step="0.5" placeholder="0.0">
+                            </div>
+                            <button id="btn-add-hours" class="btn-primary">記録</button>
+                        </div>
+                        <div class="form-row">
+                            <div class="input-group">
+                                <label>整備内容メモ</label>
+                                <input type="text" id="input-note" placeholder="例：目立てを実施、オイル補充">
+                            </div>
+                            <button id="btn-add-note" class="btn-primary">保存</button>
+                        </div>
+                    </div>
+
+                    <div class="journal-history">
+                        <h3>履歴</h3>
+                        <ul id="journal-list">
+                            <!-- Logs will be injected here -->
+                        </ul>
+                    </div>
+                </div>
+            </section>
+        </main>
+        </main>
+
+        <footer class="app-footer">
+            <p>&copy; 2026 Brushcutter Pro-Diagnostics. プロによるセルフメンテナンス支援。</p>
+            <p class="disclaimer">※本アプリの診断は一般的な2サイクルエンジンを対象としています。深刻な故障は無理をせず専門業者へ。</p>
+        </footer>
+    </div>
+    <script src="app.js"></script>
+</body>
+</html>
