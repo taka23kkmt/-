@@ -263,7 +263,7 @@ function renderDiagnosis() {
         elements.resultArea.classList.remove('hidden');
         elements.resultTitle.textContent = node.title;
         elements.resultDescription.textContent = node.description;
-        elements.actionList.innerHTML = node.actions.map(a => `<li>\${a}</li>`).join('');
+        elements.actionList.innerHTML = node.actions.map(a => `<li>${a}</li>`).join('');
     } else {
         elements.questionArea.classList.remove('hidden');
         elements.resultArea.classList.add('hidden');
@@ -286,16 +286,16 @@ function renderDiagnosis() {
 function renderMaint() {
     const device = devices[currentDeviceId];
     let html = `<div class="maint-card">
-        <div class="maint-icon">\${currentDeviceId === 'brushcutter' ? '🔧' : '⛓️'}</div>
-        <h2>\${device.name} 定期点検項目</h2>
+        <div class="maint-icon">${currentDeviceId === 'brushcutter' ? '🔧' : '⛓️'}</div>
+        <h2>${device.name} 定期点検項目</h2>
         <p class="maint-intro">定期的な点検が機械の寿命を延ばし、安全を保ちます。</p>`;
     
     device.maint.forEach(group => {
         html += `<div class="checklist-group">
-            <h3>\${group.group}</h3>
+            <h3>${group.group}</h3>
             <div class="checklist">`;
         group.items.forEach(item => {
-            html += `<label class="check-item"><input type="checkbox"> <span class="check-text">\${item}</span></label>`;
+            html += `<label class="check-item"><input type="checkbox"> <span class="check-text">${item}</span></label>`;
         });
         html += `</div></div>`;
     });
@@ -308,9 +308,9 @@ function renderJournal() {
     const data = storageData[currentDeviceId];
     elements.journalList.innerHTML = data.logs.slice().reverse().map(log => `
         <li class="journal-item">
-            <span class="journal-date">\${log.date}</span>
-            <span class="journal-text">\${log.text}</span>
-            <span class="journal-val">\${log.val || ''}</span>
+            <span class="journal-date">${log.date}</span>
+            <span class="journal-text">${log.text}</span>
+            <span class="journal-val">${log.val || ''}</span>
         </li>
     `).join('');
 }
@@ -340,15 +340,15 @@ function generateGCalLink() {
     const device = devices[currentDeviceId];
     const data = storageData[currentDeviceId];
     const nextHours = Math.ceil((data.hours + 0.1) / 20) * 20;
-    const title = encodeURIComponent(`\${device.name} メンテナンス点検 (\${nextHours}h目安)`);
-    const details = encodeURIComponent(`累積使用時間 \${data.hours}h。20時間ごとの定期点検時期です。 エアクリーナー、プラグ、各部ネジの確認を行ってください。`);
+    const title = encodeURIComponent(`${device.name} メンテナンス点検 (${nextHours}h目安)`);
+    const details = encodeURIComponent(`累積使用時間 ${data.hours}h。20時間ごとの定期点検時期です。 エアクリーナー、プラグ、各部ネジの確認を行ってください。`);
     
     const date = new Date();
     date.setMonth(date.getMonth() + 3);
     const dateStr = date.toISOString().replace(/-|:|\.\d\d\d/g, "");
-    const dateRange = `\${dateStr}/\${dateStr}`;
+    const dateRange = `${dateStr}/${dateStr}`;
 
-    return `https://www.google.com/calendar/render?action=TEMPLATE&text=\${title}&details=\${details}&dates=\${dateRange}`;
+    return `https://www.google.com/calendar/render?action=TEMPLATE&text=${title}&details=${details}&dates=${dateRange}`;
 }
 
 // --- Event Listeners ---
@@ -397,7 +397,7 @@ elements.btnLogHours.onclick = () => {
     const h = parseFloat(elements.inputHours.value);
     if (!isNaN(h) && h > 0) {
         storageData[currentDeviceId].hours += h;
-        addLog(`作業実施 (\${h}時間)`, `+\${h}h`);
+        addLog(`作業実施 (${h}時間)`, `+${h}h`);
         elements.inputHours.value = '';
     }
 };
