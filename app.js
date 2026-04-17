@@ -51,13 +51,40 @@ const devices = {
                     { text: "きれいで火花も飛ぶ", next: "carb_clogged" }
                 ]
             },
+            starts_then_stops: {
+                question: "エンジンがかかった直後、どのような状態ですか？",
+                options: [
+                    { text: "チョークを閉じると動くが開けると止まる", next: "carb_lean" },
+                    { text: "数秒でエンストする", next: "fuel_flow_issue" }
+                ]
+            },
+            low_power: {
+                question: "エアクリーナーを確認してください。状態は？",
+                options: [
+                    { text: "汚れている・目詰まりしている", next: "air_filter_clogged" },
+                    { text: "きれいな状態", next: "exhaust_clogged" }
+                ]
+            },
+            noise_vibration: {
+                question: "異音・振動の種類はどれに近いですか？",
+                options: [
+                    { text: "金属がぶつかるような異音がする", next: "blade_damaged" },
+                    { text: "ガタガタと激しく振動する", next: "mount_loose" }
+                ]
+            },
             // Results
             engine_seized: { isResult: true, title: "エンジンの焼き付き", description: "ピストンやシリンダーが固着しています。オイル不足が原因です。", actions: ["修理店に持ち込んでください。シリンダー交換が必要です。"] },
             starter_broken: { isResult: true, title: "スターターの不具合", description: "ゼンマイの折れ、あるいは爪が噛み合っていません。", actions: ["スターターアッセンブリーを分解清掃するか、交換してください。"] },
             stale_fuel: { isResult: true, title: "燃料の劣化", description: "古い燃料はキャブレターを詰まらせます。", actions: ["古い燃料を捨て、新しい混合燃料に入れ替えてください。"] },
             plug_flooded: { isResult: true, title: "燃料かぶり", description: "内部に燃料が溜まりすぎでいます。", actions: ["プラグを外し、清掃・乾燥させてから再度始動してください。"] },
             plug_dirty: { isResult: true, title: "プラグの汚れ", description: "火花が弱くなっています。", actions: ["プラグを磨くか、新品に交換してください。"] },
-            carb_clogged: { isResult: true, title: "キャブレター詰まり", description: "内部のノズルが詰まっています。", actions: ["キャブレタークリーナーで洗浄するか、ダイヤフラム等を交換してください。"] }
+            carb_clogged: { isResult: true, title: "キャブレター詰まり", description: "内部のノズルが詰まっています。", actions: ["キャブレタークリーナーで洗浄するか、ダイヤフラム等を交換してください。"] },
+            carb_lean: { isResult: true, title: "キャブレターの燃調不良（薄い）", description: "混合気が薄すぎます。キャブレター内部の詰まりが原因です。", actions: ["キャブレタークリーナーでメインノズルを洗浄してください。改善しない場合はダイヤフラムを交換してください。"] },
+            fuel_flow_issue: { isResult: true, title: "燃料供給の不良", description: "タンクからキャブレターへの燃料供給が不安定です。", actions: ["燃料フィルターを新品に交換してください。燃料ホースに詰まりや亀裂がないか確認してください。"] },
+            air_filter_clogged: { isResult: true, title: "エアクリーナーの目詰まり", description: "空気の吸入量が不足し、エンジン出力が低下しています。", actions: ["エアクリーナーを取り外し、清掃または交換してください。"] },
+            exhaust_clogged: { isResult: true, title: "マフラー（排気口）の詰まり", description: "カーボン堆積により排気が妨げられています。", actions: ["マフラーを外し、排気ポートとマフラー内のカーボンを除去してください。"] },
+            blade_damaged: { isResult: true, title: "刃・取付部の損傷", description: "チップソーの欠けまたは取付ボルトの緩みが原因です。", actions: ["エンジンを止めて刃の状態を確認し、欠けがあれば交換してください。取付ボルトも増し締めしてください。"] },
+            mount_loose: { isResult: true, title: "各部の緩み・ギヤケース不良", description: "エンジンやハンドルの取付部、またはギヤケース内部のベアリングが摩耗しています。", actions: ["全ネジ・ボルトを締め直してください。改善しない場合はギヤケースを点検・交換してください。"] }
         },
         maint: [
             { group: "1. 使用前点検", items: ["ネジ・ボルトの緩み確認", "燃料漏れ・ホースの亀裂確認", "飛散保護カバーの状態"] },
@@ -229,14 +256,14 @@ function renderDiagnosis() {
 
     const stepCount = history.length + 1;
     elements.currentStep.textContent = stepCount.toString().padStart(2, '0');
-    elements.progressFill.style.width = \`${Math.min(stepCount * 20, 100)}%\`;
+    elements.progressFill.style.width = `${Math.min(stepCount * 20, 100)}%`;
 
     if (node.isResult) {
         elements.questionArea.classList.add('hidden');
         elements.resultArea.classList.remove('hidden');
         elements.resultTitle.textContent = node.title;
         elements.resultDescription.textContent = node.description;
-        elements.actionList.innerHTML = node.actions.map(a => \`<li>\${a}</li>\`).join('');
+        elements.actionList.innerHTML = node.actions.map(a => `<li>\${a}</li>`).join('');
     } else {
         elements.questionArea.classList.remove('hidden');
         elements.resultArea.classList.add('hidden');
@@ -258,34 +285,34 @@ function renderDiagnosis() {
 
 function renderMaint() {
     const device = devices[currentDeviceId];
-    let html = \`<div class="maint-card">
+    let html = `<div class="maint-card">
         <div class="maint-icon">\${currentDeviceId === 'brushcutter' ? '🔧' : '⛓️'}</div>
         <h2>\${device.name} 定期点検項目</h2>
-        <p class="maint-intro">定期的な点検が機械の寿命を延ばし、安全を保ちます。</p>\`;
+        <p class="maint-intro">定期的な点検が機械の寿命を延ばし、安全を保ちます。</p>`;
     
     device.maint.forEach(group => {
-        html += \`<div class="checklist-group">
+        html += `<div class="checklist-group">
             <h3>\${group.group}</h3>
-            <div class="checklist">\`;
+            <div class="checklist">`;
         group.items.forEach(item => {
-            html += \`<label class="check-item"><input type="checkbox"> <span class="check-text">\${item}</span></label>\`;
+            html += `<label class="check-item"><input type="checkbox"> <span class="check-text">\${item}</span></label>`;
         });
-        html += \`</div></div>\`;
+        html += `</div></div>`;
     });
     
-    html += \`</div>\`;
+    html += `</div>`;
     elements.maintContent.innerHTML = html;
 }
 
 function renderJournal() {
     const data = storageData[currentDeviceId];
-    elements.journalList.innerHTML = data.logs.slice().reverse().map(log => \`
+    elements.journalList.innerHTML = data.logs.slice().reverse().map(log => `
         <li class="journal-item">
             <span class="journal-date">\${log.date}</span>
             <span class="journal-text">\${log.text}</span>
             <span class="journal-val">\${log.val || ''}</span>
         </li>
-    \`).join('');
+    `).join('');
 }
 
 function addLog(text, val) {
@@ -313,15 +340,15 @@ function generateGCalLink() {
     const device = devices[currentDeviceId];
     const data = storageData[currentDeviceId];
     const nextHours = Math.ceil((data.hours + 0.1) / 20) * 20;
-    const title = encodeURIComponent(\`\${device.name} メンテナンス点検 (\${nextHours}h目安)\`);
-    const details = encodeURIComponent(\`累積使用時間 \${data.hours}h。20時間ごとの定期点検時期です。 エアクリーナー、プラグ、各部ネジの確認を行ってください。\`);
+    const title = encodeURIComponent(`\${device.name} メンテナンス点検 (\${nextHours}h目安)`);
+    const details = encodeURIComponent(`累積使用時間 \${data.hours}h。20時間ごとの定期点検時期です。 エアクリーナー、プラグ、各部ネジの確認を行ってください。`);
     
     const date = new Date();
     date.setMonth(date.getMonth() + 3);
     const dateStr = date.toISOString().replace(/-|:|\.\d\d\d/g, "");
-    const dateRange = \`\${dateStr}/\${dateStr}\`;
+    const dateRange = `\${dateStr}/\${dateStr}`;
 
-    return \`https://www.google.com/calendar/render?action=TEMPLATE&text=\${title}&details=\${details}&dates=\${dateRange}\`;
+    return `https://www.google.com/calendar/render?action=TEMPLATE&text=\${title}&details=\${details}&dates=\${dateRange}`;
 }
 
 // --- Event Listeners ---
@@ -370,7 +397,7 @@ elements.btnLogHours.onclick = () => {
     const h = parseFloat(elements.inputHours.value);
     if (!isNaN(h) && h > 0) {
         storageData[currentDeviceId].hours += h;
-        addLog(\`作業実施 (\${h}時間)\`, \`+\${h}h\`);
+        addLog(`作業実施 (\${h}時間)`, `+\${h}h`);
         elements.inputHours.value = '';
     }
 };
